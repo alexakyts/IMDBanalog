@@ -1,0 +1,133 @@
+﻿@model Film
+@using System.Security.Claims;
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,500;1,400;1,500&display=swap');
+    @@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,600&display=swap');
+    * {
+        font-family: 'Roboto', sans-serif;
+    }
+    .rate img{
+        margin-left:4px;
+    }
+</style>
+@{ 
+    var rating = Math.Round((Model.UserRate?.Select(x => x.Rate).Average() ??0)*10);
+}
+
+<div class="info" style="display:flex; justify-content:space-between">
+    <div class="text">
+        <p style="font-size:50px; text-align:center; font-family: 'Playfair Display', serif; margin-bottom:2px">@Model?.Name</p>
+        <p class="font-italic" style="color:grey;"> @Model.ReleaseDate | Rating: @Model.Rating | @Model.Genres | @Model.Runtime min | Director: @Model.Director</p>
+    </div>
+
+    <div style="padding-top: 20px ">
+        <label><img src="/img/metacritic-icon.svg" alt="Alternate Text" style="width:50px;" /> @Model.Metacritics</label>
+        <label><img src="/img/rotten tomato.png" alt="Alternate Text" style="width:50px;" /> @Model.RottenTomatoes </label>
+        <label><img src="~/img/tomatouser.png" alt="Alternate Text" style="width:50px;" /> @rating</label>
+    </div>
+
+</div>
+<div class="main_ph">
+    <img src="/img/@Model.Id/main.png" alt="Alternate Text" style="width:100%;" />
+</div>
+
+
+<div class="container">
+    <div class="row" style="margin-top: 30px;">
+        <div class="col-sm-12 border">
+            <p style="font-family: 'Playfair Display', serif; font-size: 27px">@Model.Summary</p>
+        </div>
+        <div class=" rate" style="display:flex; justify-content:flex-end; width:100%;margin-top:5px;">
+            <img class="rate-star" src="/img/star.svg" alt="Alternate Text" style="height:25px" onmouseover="check(1)" onclick="rateCheck(1)" />
+            <img class="rate-star" src="/img/star.svg" alt="Alternate Text" style="height:25px" onmouseover="check(2)"  onclick="rateCheck(2)"/>
+            <img class="rate-star" src="/img/star.svg" alt="Alternate Text" style="height:25px" onmouseover="check(3)" onclick="rateCheck(3)"/>
+            <img class="rate-star" src="/img/star.svg" alt="Alternate Text" style="height:25px" onmouseover="check(4)" onclick="rateCheck(4)"/>
+            <img class="rate-star" src="/img/star.svg" alt="Alternate Text" style="height:25px" onmouseover="check(5)" onclick="rateCheck(5)"/>
+            <img class="rate-star" src="/img/star.svg" alt="Alternate Text" style="height:25px" onmouseover="check(6)" onclick="rateCheck(6)"/>
+            <img class="rate-star" src="/img/star.svg" alt="Alternate Text" style="height:25px" onmouseover="check(7)" onclick="rateCheck(7)"/>
+            <img class="rate-star" src="/img/star.svg" alt="Alternate Text" style="height:25px" onmouseover="check(8)" onclick="rateCheck(8)"/>
+            <img class="rate-star" src="/img/star.svg" alt="Alternate Text" style="height:25px" onmouseover="check(9)" onclick="rateCheck(9)"/>
+            <img class="rate-star" src="/img/star.svg" alt="Alternate Text" style="height:25px" onmouseover="check(10)" onclick="rateCheck(10)"/>
+            <form asp-action="Create" method="post" style="display:flex ; height: 26px; margin-left:5px">
+                <input type="text" id="userName" name="name" value="@User.Identity.Name" style="display:none; height:1px" /><br />
+                <input type="number" id="rate" name="rate" style="display:none " /><br />
+                <input type="number" id="modelId" name="id" value="@Model.Id" style="display:none; height:1px" /><br />
+                <input class="btn-dark" type="submit" value="Rate"  style="border:1px; border-radius:5px; width:100px"/>
+            </form>
+        </div>
+        <div style="display:flex; justify-content:space-between; width:100%; margin-top:20px">
+            <img src="/img/@Model.Id/1.jpg"  class="img-thumbnail" style="max-height:200px;" alt="Alternate Text" />
+            <img src="/img/@Model.Id/2.jpg" class="img-thumbnail"  style="max-height:200px;" alt="Alternate Text" />
+            <img src="/img/@Model.Id/3.png"   class="img-thumbnail" style="max-height:200px;" alt="Alternate Text" />
+        </div>
+        
+        @{ 
+            var userName = User.Identity.Name;
+            var a = userName;
+         }
+    </div>
+</div>
+
+
+
+<script>
+    var checked = false;
+    var tempimage = 0;
+    var tmp = 0;
+    function check( n)
+    { 
+        console.log(n)
+        tmp = n;
+        checked = false;
+        for (let i = 0; i < n; i++) {
+            let k = $(".rate-star")[i];
+            $(".rate").find(k).attr('src', '/img/blackstar.svg')
+        }
+        checked = true;
+    }
+
+    document.onmouseover = function (event) {
+
+       
+      
+        
+
+        if (event.target.className != "rate-star" && checked == true) {
+            
+            for (let i = 0; i < tempimage; i++) {
+                let k = $(".rate-star")[i];
+                $(".rate").find(k).attr('src', '/img/blackstar.svg')
+            }
+            for (let n = tempimage; n < 10; n++ && checked == true) {
+                let k = $(".rate-star")[n];
+                $(".rate").find(k).attr('src', '/img/star.svg')
+            }
+        }
+        else {
+            for (let i = 0; i < tmp; i++ && checked == true) {
+                let k = $(".rate-star")[i];
+                $(".rate").find(k).attr('src', '/img/blackstar.svg')
+            }
+
+            for (let n = tmp; n < 10; n++ && checked == true) {
+                let k = $(".rate-star")[n];
+                $(".rate").find(k).attr('src', '/img/star.svg')
+            }
+        }
+    }
+
+    function rateCheck(n) {
+        checked = true;
+        tempimage = n;
+        let item = document.getElementById('rate')
+        for (let i = 0; i < n; i++) {
+            let k = $(".rate-star")[i];
+            $(".rate").find(k).attr('src', '/img/blackstar.svg')
+        }
+        item.value = n;
+    }
+</script>
